@@ -1,0 +1,17 @@
+# Coleta todos os arquivos fonte das telas
+file(GLOB SCREEN_SOURCES "*.cpp")
+
+# Cria uma biblioteca estática chamada "ui_screens"
+add_library(ui_screens ${SCREEN_SOURCES})
+
+# Adiciona diretórios de include para que as telas achem o lvgl.h e seus proprios headers
+target_include_directories(ui_screens PUBLIC 
+    .
+    ${CMAKE_SOURCE_DIR}/lib/lvgl/src # Ajuste conforme onde o LVGL foi baixado
+)
+
+# Linka com LVGL e Pico Stdlib
+target_link_libraries(ui_screens 
+    pico_stdlib 
+    lvgl
+)
