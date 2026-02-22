@@ -1,0 +1,11 @@
+# Bot Telegram
+python-telegram-bot==20.7
+
+# HTTP Client
+aiohttp==3.9.1
+
+# Utilitários
+python-dotenv==1.0.0
+
+# QR Code
+segno==1.6.1
