@@ -1,0 +1,30 @@
+{
+  "name": "Med Checkin C++",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "context": "."
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-vscode.cpptools",
+                "ms-vscode.cmake-tools",
+                "raspberry-pi.raspberry-pi-pico",
+                "ms-vscode.vscode-serial-monitor",
+                "bierner.markdown-mermaid"
+            ]
+        }
+    },
+    "remoteUser": "developer",
+    "workspaceFolder": "/workspace",
+    "mounts": [
+        "source=/dev,target=/dev,type=bind",
+        "source=${localWorkspaceFolder},target=/workspace,type=bind"
+    ],
+    "runArgs": [
+        "--device-cgroup-rule=c 189:* rmw",
+        "--device-cgroup-rule=c 166:* rmw"
+    ],
+
+    "postCreateCommand": "git submodule update --init --recursive"
+}
