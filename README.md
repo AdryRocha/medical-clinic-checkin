@@ -1,6 +1,22 @@
 # medical-clinic-checkin
 Repositório com o desenvolvimento de código embarcado para funcionalidades de check-in em clínicas médicas, baseado em Raspberry Pi Pico W. O paciente agenda sua consulta via Telegram Bot, apresenta o QR Code no totem, o dispositivo valida o agendamento, realiza verificação/cadastro biométrico e confirma o check-in com sincronização periódica via API REST.
 
+# Organização do repositório
+
+Este repositório contém 3 branches: `api`, `rp2040`, `rp2350`.
+
+- API: Implementação da API na rp2040.
+- Versão RP2040: Implementação estável focada em eficiência.
+- Versão RP2350 (Pico 2W): Implementação avançada utilizando recursos de segurança (TrustZone) e maior poder de processamento.
+
+Para alternar entre estas implementações, basta executar o seguinte comando no seu terminal:
+
+```
+git checkout <nome-da-branch>
+```
+
+
+
 # Medical Clinic Check-in System
 
 Sistema embarcado de check-in para clínicas médicas baseado em Raspberry Pi Pico W. O paciente agenda sua consulta via Telegram Bot, apresenta o QR Code no totem, o dispositivo valida o agendamento, realiza verificação/cadastro biométrico e confirma o check-in com sincronização periódica via API REST.
