@@ -430,6 +430,12 @@ ninja
 
 ---
 Este repositório é composto por três branches protegidas, cada uma com o desenvolvimento específico.
+---
+O projeto está disponível em duas versões:
+
+Versão RP2040: Implementação estável focada em eficiência.
+
+Versão RP2350 (Pico 2W): Implementação avançada utilizando recursos de segurança (TrustZone) e maior poder de processamento.
 
 ---
 
@@ -437,5 +443,6 @@ Este repositório é composto por três branches protegidas, cada uma com o dese
 Adriana Rocha Castro de Paula
 Luana Menezes
 
+---
 Projeto desenvolvido como parte da Residência Tecnológica do programa EmbarcaTech - Polo Campinas/SP.
 ---
