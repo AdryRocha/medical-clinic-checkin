@@ -48,7 +48,7 @@ static FT6336U_Driver* touch_driver = nullptr;
 static LVGLDisplayAdapter* g_lv_disp_adapter = nullptr;
 static LVGLTouchAdapter* g_lv_touch_adapter = nullptr;
 // LVGL mutex used by UI and callbacks (single definition)
-SemaphoreHandle_t g_lvgl_mutex = NULL;
+SemaphoreHandle_t g_lvgl_mutex;
 
 // Task static TCBs and stacks (single definitions)
 static StaticTask_t ui_task_tcb;
