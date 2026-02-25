@@ -20,28 +20,14 @@ git checkout <nome-da-branch>
 ##
 | Branch | Foco Tecnológico	| Diferencial de Engenharia |
 |------|---------|---------|
-CamadaTecnologiaJustificativa TécnicaKernelFreeRTOSGarante determinismo nas tarefas de UI e validação de biometria.Interface (GUI)LVGL v8.3.11Motor gráfico otimizado para hardware limitado com suporte a antialiasing.PersistênciaFatFS (SD Card)Sistema de arquivos resiliente para armazenamento de logs e agendamentos offline.ParsingcJSONManipulação eficiente de objetos JSON provenientes da leitura de QR Codes.Build SystemCMake + NinjaAutomação de build multiplataforma e gestão de dependências via FetchContent.
+| Camada | Tecnologia | Justificativa Técnica |
+| KernelFreeRTOS | Garante determinismo nas tarefas de UI e validação de biometria.
+| Interface (GUI) | LVGL v8.3.11 | Motor gráfico otimizado para hardware limitado com suporte a antialiasing.
+| Persistência | FatFS (SD Card) | | Sistema de arquivos resiliente para armazenamento de logs e agendamentos offline. | 
+| Parsing | cJSON | Manipulação eficiente de objetos JSON provenientes da leitura de QR Codes. | 
+| Build System | CMake + Ninja | Automação de build multiplataforma e gestão de dependências via FetchContent. |
 
 
-# Medical Clinic Check-in System
-
-Sistema embarcado de check-in para clínicas médicas baseado em Raspberry Pi Pico W. O paciente agenda sua consulta via Telegram Bot, apresenta o QR Code no totem, o dispositivo valida o agendamento, realiza verificação/cadastro biométrico e confirma o check-in com sincronização periódica via API REST.
-
----
-
-## Sumário
-
-- [Visão Geral](#visão-geral)
-- [Hardware](#hardware)
-- [Arquitetura de Software](#arquitetura-de-software)
-- [Máquina de Estados](#máquina-de-estados)
-- [Fluxo de Check-in](#fluxo-de-check-in)
-- [Configuração](#configuração)
-- [Build e Flash](#build-e-flash)
-- [Backend (API + Bot)](#backend-api--bot)
-- [Dependências](#dependências)
-- [Estrutura do Projeto](#estrutura-do-projeto)
-- [Demos Standalone](#demos-standalone)
 
 ---
 
@@ -82,7 +68,7 @@ Sistema embarcado de check-in para clínicas médicas baseado em Raspberry Pi Pi
 
 ## Arquitetura de Software
 
-O sistema segue uma arquitetura em **6 camadas**, desacoplando hardware de lógica de negócio:
+O software foi projetado seguindo o padrão de Camadas de Abstração de Hardware (HAL), permitindo portabilidade total entre RP2040 e RP2350:
 
 ```mermaid
 graph TB
@@ -178,149 +164,6 @@ graph TB
 | `DataStorageService` | Lê/grava JSON de agendamentos e templates `.dat` de fingerprint no SD Card (FatFS) |
 | `TimeService` | Sincroniza NTP → RTC do RP2040, fornece data/hora formatadas |
 | `FingerprintService` | Cadastro (2 capturas → template → SD + API) e verificação de digitais via R307S |
-
-> Todos os diagramas em [`docs/diagrams/`](medical-clinic-checkin-pico/docs/diagrams/): [classes](medical-clinic-checkin-pico/docs/diagrams/class_diagrams.md) · [sequência](medical-clinic-checkin-pico/docs/diagrams/sequence_diagrams.md) · [arquitetura](medical-clinic-checkin-pico/docs/diagrams/software_architecture_layers_diagram.md)
-
----
-
-## Máquina de Estados
-
-| Estado | Descrição | Próximos Estados |
-|--------|-----------|------------------|
-| `INITIALIZING` | Boot, conexão WiFi e sincronização NTP | `DOWNLOADING_APPOINTMENTS`, `ERROR_CRITICAL` |
-| `DOWNLOADING_APPOINTMENTS` | Autenticação na API e download dos agendamentos do dia | `IDLE`, `ERROR_CRITICAL` |
-| `IDLE` | Welcome Screen aguardando leitura de QR Code | `VALIDATING` |
-| `VALIDATING` | Parse e validação do QR Code (cJSON, CPF, horário) | `FINGERPRINT_*`, `APPOINTMENT`, `ERROR` |
-| `FINGERPRINT_VERIFYING` | Verificação biométrica (template do SD → sensor) | `APPOINTMENT`, `ERROR` |
-| `FINGERPRINT_ENROLLING` | Cadastro biométrico (2 capturas → template) | `FINGERPRINT_UPLOADING`, `ERROR` |
-| `FINGERPRINT_UPLOADING` | Upload do template para API | `APPOINTMENT`, `ERROR` |
-| `APPOINTMENT` | Tela de check-in confirmado | `IDLE` (timeout 5s) |
-| `ERROR` | Erro recuperável (QR inválido, consulta não encontrada) | `IDLE` (timeout 3s) |
-| `ERROR_CRITICAL` | Falha de hardware, SD ausente, WiFi indisponível | `RESTARTING` |
-| `RESTARTING` | Reinício via watchdog | `INITIALIZING` |
-
-> Diagrama Mermaid completo em [`docs/diagrams/state_machine_diagram.md`](medical-clinic-checkin-pico/docs/diagrams/state_machine_diagram.md)
-
----
-
-## Fluxo de Check-in
-
-1. **Boot** → Conecta WiFi, sincroniza NTP, inicializa drivers
-2. **Download** → Autentica na API (JWT), baixa agendamentos do dia + templates biométricos para o SD Card
-3. **Idle** → Welcome Screen com relógio aguardando QR Code
-4. **QR Scan** → GM67 lê QR → `task_qr_reader` envia JSON para fila FreeRTOS
-5. **Validação** → `task_qr_validator` faz parse (cJSON), busca agendamento no SD, valida CPF e janela de horário
-6. **Biometria** (se necessário):
-   - *Verificação*: carrega template do SD → sensor → captura e compara
-   - *Cadastro*: 2 capturas → gera template → salva no SD + upload para API
-7. **Confirmação** → Tela de check-in confirmado, marca agendamento como "realizada" (local + API)
-8. **Retorno** → Timeout → volta para Idle
-
----
-
-## Configuração
-
-Todas as configurações ficam centralizadas em `config/`:
-
-| Arquivo | Descrição |
-|---------|----------|
-| `wifi_config.hpp` | SSID, senha e país do WiFi |
-| `api_config.hpp` | URL da API, endpoints, credenciais, timeouts |
-| `pin_config.hpp` | Mapeamento de todos os GPIOs |
-| `display_config.hpp` | Resolução, rotação, SPI speed, buffer LVGL |
-| `fingerprint_config.hpp` | UART e baudrate do sensor biométrico |
-| `qr_code_reader_config.hpp` | UART e baudrate do scanner QR |
-| `FreeRTOSConfig.h` | Configuração do kernel FreeRTOS |
-| `lv_conf.h` | Configuração do LVGL |
-| `hw_config.c` | Configuração do SD Card (FatFS) |
-| `mongoose_config.h` | Configuração do Mongoose HTTP |
-| `lwipopts.h` | Configuração do lwIP (TCP/IP stack) |
-
-Antes de compilar, edite pelo menos:
-
-**WiFi** (`config/wifi_config.hpp`):
-```cpp
-#define WIFI_SSID     "SuaRede"
-#define WIFI_PASSWORD "SuaSenha"
-#define WIFI_COUNTRY  "BR"
-```
-
-**API** (`config/api_config.hpp`):
-```cpp
-#define API_BASE_URL  "http://192.168.0.13:8000"
-#define API_USERNAME  "seu_usuario"
-#define API_PASSWORD  "sua_senha"
-```
-
-**Pinos** (`config/pin_config.hpp`): altere caso sua fiação seja diferente.
-
----
-
-## Build e Flash
-
-### Pré-requisitos
-
-- [VS Code](https://code.visualstudio.com/) com extensão [**Raspberry Pi Pico**](https://marketplace.visualstudio.com/items?itemName=raspberry-pi.raspberry-pi-pico)
-- Pico SDK 2.1.1, GCC ARM 14_2_Rel1, CMake ≥ 3.13, Ninja 1.12.1
-- (Ou use o **Dev Container** incluso — tudo já configurado)
-
-### Compilar
-
-**Via extensão Raspberry Pi Pico (recomendado):**
-1. Abra o projeto no VS Code
-2. `Ctrl+Shift+B` → selecione **Compile Project**
-
-**Via terminal:**
-```bash
-mkdir -p build && cd build
-cmake .. -G Ninja
-ninja
-```
-
-### Flash no Pico
-
-**Via extensão Raspberry Pi Pico (recomendado):**
-1. Conecte o Pico via USB
-2. Clique no botão **Run** na barra de status, ou execute a task **Run Project**
-
-**Via terminal:**
-```bash
-# picotool (sem desconectar USB):
-picotool load build/medical-clinic-checkin-pico.elf -fx
-
-# Ou UF2 manual: segure BOOTSEL, conecte USB, copie o .uf2
-cp build/medical-clinic-checkin-pico.uf2 /media/$USER/RPI-RP2/
-```
-
-### Monitor Serial
-
-```bash
-minicom -b 115200 -o -D /dev/ttyACM0
-```
-
----
-
-## Backend (API + Bot)
-
-O sistema embarcado se comunica com um backend composto por:
-
-- **API REST** (FastAPI + PostgreSQL) — gerencia pacientes, profissionais, agendamentos e biometria
-- **Telegram Bot** — agendamento de consultas pelo paciente, com envio do QR Code
-
-> Repositório do backend: [Luana-Menezes/Clinicas_Medicas_WebAPI](https://github.com/Luana-Menezes/Clinicas_Medicas_WebAPI)
-
----
-
-## Dependências
-
-| Biblioteca | Versão | Origem | Uso |
-|-----------|--------|--------|-----|
-| [Pico SDK](https://github.com/raspberrypi/pico-sdk) | 2.1.1 | SDK | `pico_stdlib`, `hardware_spi`, `hardware_i2c`, `hardware_uart`, `hardware_rtc`, `pico_cyw43_arch`, lwIP |
-| [FreeRTOS-Kernel](https://github.com/FreeRTOS/FreeRTOS-Kernel) | — | Submodule | RTOS: tasks, queues, event groups, semáforos |
-| [LVGL](https://github.com/lvgl/lvgl) | 8.3.11 | FetchContent | Interface gráfica touchscreen |
-| [no-OS-FatFS](https://github.com/carlk3/no-OS-FatFS-SD-SPI-RPi-Pico) | — | Submodule | Sistema de arquivos FAT32 no SD Card via SPI |
-| [cJSON](https://github.com/DaveGamble/cJSON) | 1.7.18 | FetchContent | Parser JSON (agendamentos, QR Code) |
-| [Mongoose](https://github.com/cesanta/mongoose) | 7.20 | FetchContent | Cliente HTTP para comunicação com a API |
 
 ---
 
@@ -426,39 +269,8 @@ O sistema embarcado se comunica com um backend composto por:
         ├── sequence_diagrams.md
         └── state_machine_diagram.md
 ```
-
----
-
-## Demos Standalone
-
-O projeto inclui demos para testar cada periférico isoladamente. Para compilar um demo específico, altere `BUILD_TARGET` no CMake:
-
-```bash
-cd build
-cmake .. -G Ninja -DBUILD_TARGET=QR_DEMO
-ninja
-```
-
-| Target | Testa |
-|--------|-------|
-| `MAIN` | Aplicação completa (padrão) |
-| `LVGL_DEMO` | Display + touchscreen com widgets LVGL |
-| `QR_DEMO` | Scanner GM67 em modo contínuo |
-| `FINGERPRINT_DEMO` | Sensor R307S — cadastro, verificação, busca, exclusão |
-| `SDCARD_DEMO` | SD Card — mount, leitura, escrita, listagem |
-| `WIFI_DEMO` | WiFi — conexão, scan, DNS, TCP echo server, RSSI |
-
-> Instruções detalhadas em [`src/tests/code_examples/README.md`](medical-clinic-checkin-pico/src/tests/code_examples/README.md)
-
----
-Este repositório é composto por três branches protegidas, cada uma com o desenvolvimento específico.
----
-O projeto está disponível em duas versões:
-
-Versão RP2040: Implementação estável focada em eficiência.
-
-Versão RP2350 (Pico 2W): Implementação avançada utilizando recursos de segurança (TrustZone) e maior poder de processamento.
-
+Licença & Uso
+Este projeto está licenciado sob a MIT License. Sinta-se à vontade para explorar, modificar e contribuir, mantendo os créditos originais.
 ---
 
 👥 Autoras
@@ -466,5 +278,5 @@ Adriana Rocha Castro de Paula
 Luana Menezes
 
 ---
-Projeto desenvolvido como parte da Residência Tecnológica do programa EmbarcaTech - Polo Campinas/SP.
+Projeto desenvolvido como parte da Residência Tecnológica em Sistemas Embarcadosdo, do programa EmbarcaTech - Polo Campinas/SP.
 ---
