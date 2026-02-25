@@ -1,13 +1,15 @@
 # medical-clinic-checkin
-Repositório com o desenvolvimento de código embarcado para funcionalidades de check-in em clínicas médicas, baseado em Raspberry Pi Pico W. O paciente agenda sua consulta via Telegram Bot, apresenta o QR Code no totem, o dispositivo valida o agendamento, realiza verificação/cadastro biométrico e confirma o check-in com sincronização periódica via API REST.
+Repositório com o desenvolvimento de código embarcado para funcionalidades de check-in em clínicas médicas, baseado em Raspberry Pi Pico W. O sistema integra tecnologias de Sistemas Embarcados de Tempo Real (RTOS), Visão Computacional, Biometria e Integração Cloud em uma arquitetura robusta e escalável.
 
-# Organização do repositório
+# Arquitetura de Branches (Estratégia de Hardware)
 
-Este repositório contém 3 branches: `api`, `rp2040`, `rp2350`.
+Para atender a diferentes requisitos de custo e segurança, o projeto está segmentado em três implementações principais:
 
-- API: Implementação da API na rp2040.
-- Versão RP2040: Implementação estável focada em eficiência.
-- Versão RP2350 (Pico 2W): Implementação avançada utilizando recursos de segurança (TrustZone) e maior poder de processamento.
+| Branch | Foco Tecnológico	| Diferencial de Engenharia |
+|------|---------|---------|
+| rp2040 |	Eficiência & Custo | Otimização para Dual-Core ARM Cortex-M0+ e gestão rigorosa de 264KB de RAM |
+| rp2350 |	Performance & Segurança	| Utilização de ARM Cortex-M33, aceleração de ponto flutuante (FPU) e isolamento TrustZone |
+| api |	Integração & Cloud | Gateway de comunicação REST e gestão de templates biométricos via PostgreSQL |
 
 Para alternar entre estas implementações, basta executar o seguinte comando no seu terminal:
 
@@ -15,6 +17,10 @@ Para alternar entre estas implementações, basta executar o seguinte comando no
 git checkout <nome-da-branch>
 ```
 
+##
+| Branch | Foco Tecnológico	| Diferencial de Engenharia |
+|------|---------|---------|
+CamadaTecnologiaJustificativa TécnicaKernelFreeRTOSGarante determinismo nas tarefas de UI e validação de biometria.Interface (GUI)LVGL v8.3.11Motor gráfico otimizado para hardware limitado com suporte a antialiasing.PersistênciaFatFS (SD Card)Sistema de arquivos resiliente para armazenamento de logs e agendamentos offline.ParsingcJSONManipulação eficiente de objetos JSON provenientes da leitura de QR Codes.Build SystemCMake + NinjaAutomação de build multiplataforma e gestão de dependências via FetchContent.
 
 
 # Medical Clinic Check-in System
