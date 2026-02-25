@@ -62,8 +62,6 @@ git checkout <nome-da-branch>
 | SD Card (FAT32) | SPI1 | MISO=GP12, MOSI=GP15, SCK=GP14, CS=GP13 |
 | WiFi CYW43439 | Integrado | — |
 
-> Diagrama completo em [`docs/diagrams/hardware_diagram.md`](medical-clinic-checkin-pico/docs/diagrams/hardware_diagram.md)
-
 ---
 
 ## Arquitetura de Software
