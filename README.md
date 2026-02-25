@@ -68,8 +68,6 @@ git checkout <nome-da-branch>
 
 O software foi projetado seguindo o padrão de Camadas de Abstração de Hardware (HAL), permitindo portabilidade total entre RP2040 e RP2350:
 
-```
-
 ### Tasks FreeRTOS
 
 | Task | Prioridade | Stack | Responsabilidade |
@@ -194,14 +192,14 @@ O software foi projetado seguindo o padrão de Camadas de Abstração de Hardwar
         ├── sequence_diagrams.md
         └── state_machine_diagram.md
 ```
-Licença & Uso
-Este projeto está licenciado sob a MIT License. Sinta-se à vontade para explorar, modificar e contribuir, mantendo os créditos originais.
+### Licença & Uso
+## Este projeto está licenciado sob a MIT License. Sinta-se à vontade para explorar, modificar e contribuir, mantendo os créditos originais.
 ---
 
-👥 Autoras
+### Desenvolvido por
 Adriana Rocha Castro de Paula
 Luana Menezes
 
 ---
-Projeto desenvolvido como parte da Residência Tecnológica em Sistemas Embarcadosdo, do programa EmbarcaTech - Polo Campinas/SP.
+## Projeto desenvolvido como parte da Residência Tecnológica em Sistemas Embarcadosdo, do programa EmbarcaTech - Polo Campinas/SP.
 ---
