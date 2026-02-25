@@ -198,6 +198,7 @@ O software foi projetado seguindo o padrão de Camadas de Abstração de Hardwar
 
 ### Desenvolvido por
 Adriana Rocha Castro de Paula
+
 Luana Menezes
 
 ---
