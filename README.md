@@ -36,6 +36,7 @@ git checkout <nome-da-branch>
 | Item | Detalhe |
 |------|---------|
 | **MCU** | RP2040W — Dual-core ARM Cortex-M0+ @ 133 MHz, WiFi CYW43439 |
+| **MCU** | RP2350W — Dual-core ARM Cortex-M33 ou RISCO-V @ 150 MHz, ARM TrustZone, OTP |
 | **RTOS** | FreeRTOS (5 tasks, queues, event groups) |
 | **UI** | LVGL v8.3.11 — 7 telas, ícones desenhados via código |
 | **Linguagem** | C++17 / C11 |
