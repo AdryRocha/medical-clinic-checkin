@@ -1,0 +1,7 @@
+/build/
+/.vscode/
+/.pico-sdk/
+/pico-sdk/
+/*.uf2
+/*.elf
+/*.map
