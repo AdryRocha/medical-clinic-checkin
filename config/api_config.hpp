@@ -7,15 +7,15 @@
  */
 
 // API Base URL - Update with your server's IP address or hostname
-#define API_BASE_URL "http://192.168.0.171:8000"
+#define API_BASE_URL "http://127.0.0.1:8000"
 
 // API Endpoints
 #define API_ENDPOINT_AUTH "/auth/token"
 #define API_ENDPOINT_APPOINTMENTS "/consultas"
 
 // Device Credentials
-#define API_DEVICE_USERNAME "admin"
-#define API_DEVICE_PASSWORD "senha"
+#define API_DEVICE_USERNAME ""
+#define API_DEVICE_PASSWORD ""
 
 // Timeout configuration (milliseconds)
 #define API_DEFAULT_TIMEOUT_MS 30000

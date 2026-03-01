@@ -204,7 +204,7 @@ Todas as configurações ficam centralizadas em `config/`:
 | `pin_config.hpp` | Mapeamento de todos os GPIOs |
 | `display_config.hpp` | Resolução, rotação, SPI speed, buffer LVGL |
 | `fingerprint_config.hpp` | UART e baudrate do sensor biométrico |
-| `qr_code_reader_config.hpp` | UART e baudrate do scanner QR |
+| `qr_code_reader_config.hpp` | UART e rate do scanner QR |
 | `FreeRTOSConfig.h` | Configuração do kernel FreeRTOS |
 | `lv_conf.h` | Configuração do LVGL |
 | `hw_config.c` | Configuração do SD Card (FatFS) |

@@ -1,7 +1,9 @@
-/build/
-/.vscode/
-/.pico-sdk/
-/pico-sdk/
-/*.uf2
-/*.elf
-/*.map
+/docs/videos_fotos/
+/api_rest/
+build/
+.vscode/
+.pico-sdk/
+pico-sdk/
+*.uf2
+*.elf
+*.map

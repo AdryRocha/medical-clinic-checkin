@@ -1,8 +1,6 @@
 #include "lvgl_display_adapter.hpp"
 #include <stdio.h>
 
-#include "../../drivers/display/interface/display_interface.hpp"
-
 LVGLDisplayAdapter::LVGLDisplayAdapter(DisplayInterface* display,
                                        lv_color_t* buf1,
                                        lv_color_t* buf2,

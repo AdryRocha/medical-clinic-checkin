@@ -15,8 +15,6 @@
 #define QR_BUFFER_SIZE 512
 #define DISPLAY_TIME_MS 5000
 
-#define SIMULATION_MODE 1
-
 void task_qr_validator(void* params) {
     QRValidatorParams* validator_params = static_cast<QRValidatorParams*>(params);
     
@@ -99,25 +97,10 @@ void task_qr_validator(void* params) {
                 
                 auto& fingerprintService = FingerprintService::getInstance();
                 
-                // fingerprint_operation_screen_update_status("Coloque seu dedo no sensor...");
-                // uint16_t confidence = 0;
-                // bool verified = fingerprintService.verifyFingerprint(appointment.patient.id, confidence, 15000);
-                
                 fingerprint_operation_screen_update_status("Coloque seu dedo no sensor...");
-
                 uint16_t confidence = 0;
-                bool verified = false;
-
-                #if SIMULATION_MODE
-                printf("[SIM] Skipping fingerprint verification\n");
-                confidence = 100;  // só pra log
-                verified = true;   // força sucesso
-                vTaskDelay(pdMS_TO_TICKS(800)); // opcional: dá tempo de ver a tela
-                #else
-                verified = fingerprintService.verifyFingerprint(appointment.patient.id, confidence, 15000);
-                #endif
-
-
+                bool verified = fingerprintService.verifyFingerprint(appointment.patient.id, confidence, 15000);
+                
                 if (!verified) {
                     
                     error_screen_update(
