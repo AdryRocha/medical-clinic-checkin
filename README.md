@@ -1,5 +1,5 @@
 # medical-clinic-checkin
-Repositório com o desenvolvimento de código embarcado para funcionalidades de check-in em clínicas médicas, baseado em Raspberry Pi Pico W. O sistema integra tecnologias de Sistemas Embarcados de Tempo Real (RTOS), Visão Computacional, Biometria e Integração Cloud em uma arquitetura robusta e escalável.
+Repositório com o desenvolvimento de código embarcado, utilizando a linguagem C++, para funcionalidades de check-in em clínicas médicas, baseado em Raspberry Pi Pico W. O sistema integra tecnologias de Sistemas Embarcados de Tempo Real (RTOS), Visão Computacional, Biometria e Integração Cloud em uma arquitetura robusta e escalável.
 
 # Arquitetura de Branches (Estratégia de Hardware)
 
