@@ -3,7 +3,7 @@
 ```mermaid
 graph TB
     subgraph RPI["Raspberry Pi Pico<br/>"]
-        CPU["RP2040W<br/>Dual Core<br/>"]
+        CPU["RP2350W<br/>Dual Core<br/>"]
         
         subgraph Interfaces["Interfaces de Comunicação"]
             UART0["UART0"]
