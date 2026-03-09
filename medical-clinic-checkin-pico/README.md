@@ -282,7 +282,7 @@ O sistema embarcado se comunica com um backend composto por:
 - **API REST** (FastAPI + PostgreSQL) — gerencia pacientes, profissionais, agendamentos e biometria
 - **Telegram Bot** — agendamento de consultas pelo paciente, com envio do QR Code
 
-> Repositório do backend: [Luana-Menezes/Clinicas_Medicas_WebAPI](https://github.com/Luana-Menezes/Clinicas_Medicas_WebAPI)
+> Repositório do grupo do backend: [Luana-Menezes/Clinicas_Medicas_WebAPI](https://github.com/Luana-Menezes/Clinicas_Medicas_WebAPI)
 
 ---
 
